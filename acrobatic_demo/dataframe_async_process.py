@@ -15,6 +15,9 @@ if __name__ == "__main__":
     np.random.RandomState(seed=2018)
     df = pd.DataFrame(np.random.randint(3, 10, size=[5, 2]))
     print("data overview: " + "\n", df.head(5))
+    print('iter items: ', list(df.iteritems())[0])
+    print('iter tuples: ', list(df.itertuples(name=False))[0])
+    print('iter rows: ', list(df.iterrows())[0])
 
     with mp.Pool(processes=3) as pool:
         result_1 = pool.imap(hypotenuse, df.itertuples(name=False), chunksize=10)

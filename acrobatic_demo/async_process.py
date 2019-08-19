@@ -29,7 +29,7 @@ def howmany_within_range2(i, row, minimum, maximum):
     for n in row:
         if minimum <= n <= maximum:
             count += 1
-    return (i, count)
+    return i, count
 
 
 def collect_result(result):
@@ -38,13 +38,13 @@ def collect_result(result):
 
 
 if __name__ == "__main__":
-    # show how many cpus in this computer
-    print("number of processors: ", mp.cpu_count())
-
     # QUESTION: calculate the number of numbers in a given range
     # prepare data
     np.random.RandomState(2018)
-    data = np.random.randint(0, 10, size=[200000, 5]).tolist()
+    data = np.random.randint(low=0, high=10, size=[200000, 5], dtype=np.int).tolist()
+    print('type of data: ', type(data))
+    print('size of data: ', len(data))
+    print('sample of data: ', data[:2])
 
     # METHOD-1: without parallellization
     result_1 = []
@@ -53,9 +53,12 @@ if __name__ == "__main__":
     print("result without parallellization: ", result_1[:5])
 
     # METHOD-2: with parallellizing
+    # show how many cpus in this computer
+    print("number of processors: ", mp.cpu_count())
+
     pool = mp.Pool(mp.cpu_count())
     # 2.1 - using Pool.apply()
-    result_2 = [pool.apply(howmany_within_range, args=(row, 4, 8)) for row in data]
+    result_2 = [pool.apply(func=howmany_within_range, args=(row, 4, 8)) for row in data]
     print("result using Pool.apply(): ", result_2[:5])
 
     # 2.2 - using Pool.map()
@@ -84,5 +87,3 @@ if __name__ == "__main__":
     print("result using Pool.starmap_async(): ", [r for i, r in result_6[:5]])
 
     pool.close()
-
-

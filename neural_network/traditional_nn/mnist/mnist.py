@@ -13,13 +13,15 @@ REGULATION_RATE = 0.0001
 TRAINING_STEPS = 30000
 MOVING_AVERAGE_DECAY = 0.99
 
+
 def inference(input_tensor, avg_class, weights1, biases1, weights2, biases2):
-    if avg_class == None:
+    if avg_class is None:
         layer1 = tf.nn.relu(tf.matmul(input_tensor, weights1) + biases1)
         return tf.matmul(layer1, weights2) + biases2
     else:
         layer1 = tf.nn.relu(tf.matmul(input_tensor, avg_class.average(weights1)) + avg_class.average(biases1))
         return tf.matmul(layer1, avg_class.average(weights2)) + avg_class.average(biases2)
+
 
 def train(mnist):
     x = tf.placeholder(dtype='float', shape=[None, INPUT_NODE], name='x_input')
