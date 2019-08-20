@@ -5,3 +5,7 @@
 *.gz
 *model/
 *data/
+*tgz
+*gz
+*zip
+*tar.gz
