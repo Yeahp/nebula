@@ -3,7 +3,7 @@ import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 import neural_network.traditional_nn.mnist.mnist_train as mnist_train
 
-EVAL_INTERVAL_SECS = 10
+EVAL_INTERVAL_SECS = 5
 
 
 def evaluate(mnist):
@@ -20,23 +20,23 @@ def evaluate(mnist):
         variables_to_restore = variable_averages.variables_to_restore()
         saver = tf.train.Saver(variables_to_restore)
 
-        while True:
-            with tf.Session() as sess:
-                ckpt = tf.train.get_checkpoint_state(mnist_train.MODEL_SAVE_PATH)
+        with tf.Session(graph=g) as sess:
+            while True:
+                ckpt = tf.train.get_checkpoint_state(mnist_train.MODEL_SAVE_PATH)  # check the latest model
                 if ckpt and ckpt.model_checkpoint_path:
                     print(ckpt.model_checkpoint_path)
                     saver.restore(sess, ckpt.model_checkpoint_path)
-                    global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1].split('.')[0]
+                    global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
                     accuracy_acore = sess.run(accuracy, feed_dict=validate_feed)
-                    print(f"after {global_step} steps, the loss is {accuracy_acore}")
+                    print(f"after {global_step} steps, the accuracy is {accuracy_acore}")
                 else:
                     print('no checkpoint file found!')
-                    return
-            #time.sleep(EVAL_INTERVAL_SECS)
+                    break
+                time.sleep(EVAL_INTERVAL_SECS)
 
 
 def main(argv=None):
-    mnist = input_data.read_data_sets("./data/", one_hot=True)
+    mnist = input_data.read_data_sets("./data", one_hot=True)
     evaluate(mnist)
 
 

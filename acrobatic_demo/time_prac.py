@@ -8,7 +8,7 @@ if __name__ == "__main__":
     year, month, day, hour, minute, second, weekday, yearday, isdst
     """
 
-    start_1, start_2 = time.clock(), time.time()
+    start_1, start_2 = time.clock(), time.time_prac()
 
     t_tuple = (2018, 11, 11, 12, 10, 9, 7, 315, 0)
     t_time_1 = time.mktime(t_tuple)  # return a timestamp, float type

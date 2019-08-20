@@ -14,7 +14,7 @@ REGULATION_RATE = 0.0001
 TRAINING_STEPS = 7000
 MOVING_AVERAGE_DECAY = 0.99
 
-MODEL_SAVE_PATH = './model/'
+MODEL_SAVE_PATH = './model'
 MODEL_NAME = 'model.ckpt'
 
 
@@ -22,7 +22,7 @@ def get_weight_variable(shape, regularizer):
     weights = tf.get_variable(name='weights', shape=shape, initializer=tf.truncated_normal_initializer(stddev=0.1))
     if regularizer is not None:
         tf.add_to_collection(name='losses', value=regularizer(weights))
-        return weights
+    return weights
 
 
 def inference(input_tensor, regularizer):
@@ -38,8 +38,8 @@ def inference(input_tensor, regularizer):
 
 
 def train(mnist):
-    x = tf.placeholder(dtype='float', shape=[None, INPUT_NODE], name='x-input')
-    y_ = tf.placeholder(dtype='float', shape=[None, OUTPUT_NODE], name='y-input')
+    x = tf.placeholder(dtype=tf.float32, shape=[None, INPUT_NODE], name='x-input')
+    y_ = tf.placeholder(dtype=tf.float32, shape=[None, OUTPUT_NODE], name='y-input')
 
     regularizer = tf.contrib.layers.l2_regularizer(REGULATION_RATE)
     y = inference(x, regularizer)
@@ -79,7 +79,7 @@ def train(mnist):
 
 
 def main(argv=None):
-    mnist = input_data.read_data_sets("./data/", one_hot=True)
+    mnist = input_data.read_data_sets("./data", one_hot=True)
     train(mnist)
 
 

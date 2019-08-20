@@ -1,6 +1,6 @@
 import logging
 import os
-from time import time
+from time_prac import time_prac
 from acrobatic_demo.download import setup_download_dir, get_links, download_link
 # or we may take relative call:
 # from .Download import setup_download_dir, get_links, download_link
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    ts = time()
+    ts = time_prac()
     client_id = os.getenv('IMGUR_CLIENT_ID')
     if not client_id:
         raise Exception("Couldn't find IMGUR_CLIENT_ID environment variable!")
@@ -19,7 +19,7 @@ def main():
     links = [l for l in get_links(client_id) if l.endswith('.jpg')]
     for link in links:
         download_link(download_dir, link)
-    print('Took {}s'.format(time() - ts))
+    print('Took {}s'.format(time_prac() - ts))
 
 
 if __name__ == '__main__':
