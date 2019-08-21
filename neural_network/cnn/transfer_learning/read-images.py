@@ -6,9 +6,9 @@ from tensorflow.python.platform import gfile
 
 
 # directory of input images
-INPUT_DATA = './path/to/flower_data'
+INPUT_DATA = './path/flower_photo'
 # directory of output images stored in numpy
-OUTPUT_FILE = './path/to/flower_processed_data.npy'
+OUTPUT_FILE = './path/flower_processed_data.npy'
 
 # proportion of validation set
 VALIDATION_PERCENTAGE = 10
@@ -32,10 +32,10 @@ def create_images_lists(sess, testing_percentage, validation_percentage):
             continue
         extensions = ['jpg', 'jpeg', 'JPG', 'JPEG']
         file_list = []
-        dir_name = os.path.basename(sub_dir)
         for extension in extensions:
-            file_glob = os.path.join(INPUT_DATA, dir_name, '*.' + extension)
-            file_list.append(glob.glob(file_glob))
+            file_glob = os.path.join(sub_dir, '*.' + extension)
+            for file in glob.glob(file_glob):
+                file_list.append(file)
         if not file_list:
             continue
 
@@ -73,6 +73,7 @@ def main():
     with tf.Session() as sess:
         processed_data = create_images_lists(sess, TEST_PERCENTAGE, VALIDATION_PERCENTAGE)
         np.save(OUTPUT_FILE, processed_data)
+
 
 if __name__ == '__main__':
     main()

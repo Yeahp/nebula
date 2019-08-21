@@ -41,8 +41,8 @@ def create_images_lists(testing_percentage, validation_percentage):
         file_list = []
         dir_name = os.path.basename(sub_dir)
         for extension in extensions:
-            file_glob = os.path.join(INPUT_DATA, dir_name, '*.' + extension)
-            file_list.append(glob.glob(file_glob))
+            file_glob = os.path.join(sub_dir, '*.' + extension)
+            file_list.extend(glob.glob(file_glob))
         if not file_list:
             continue
 
@@ -74,31 +74,31 @@ def get_image_path(image_lists, image_dir, label_name, index, category):
     mod_index = index % len(category_list)
     base_name = category_list[mod_index]
     sub_dir = label_lists['dir']
-    fully_path = os.path.join(image_dir, sub_dir, base_name) + '.txt'
+    fully_path = os.path.join(image_dir, sub_dir, base_name)
     return fully_path
 
 
 def get_bottleneck_path(image_lists, label_name, index, category):
-    return get_image_path(image_lists, CACHE_DIR, label_name, index, category)
+    return get_image_path(image_lists, CACHE_DIR, label_name, index, category) + '.txt'
 
 
-def run_bottleneck_on_iomage(sess, image_data, image_data_tensor, bottleneck_tensor):
+def run_bottleneck_on_image(sess, image_data, image_data_tensor, bottleneck_tensor):
     bottleneck_values = sess.run(bottleneck_tensor, {image_data_tensor: image_data})
     bottleneck_values = np.squeeze(bottleneck_values)
     return bottleneck_values
 
 
-def get_or_create_bottleneck(sess, images_lists, label_name, index, category, jpeg_data_tensor, bottleneck_tensor):
-    label_lists = images_lists[label_name]
+def get_or_create_bottleneck(sess, image_lists, label_name, index, category, jpeg_data_tensor, bottleneck_tensor):
+    label_lists = image_lists[label_name]
     sub_dir = label_lists['dir']
     sub_dir_path = os.path.join(CACHE_DIR, sub_dir)
     if not os.path.exists(sub_dir_path):
         os.makedirs(sub_dir_path)
-    bottleneck_path = get_bottleneck_path(images_lists, label_name, index, category)
+    bottleneck_path = get_bottleneck_path(image_lists, label_name, index, category)
     if not os.path.exists(bottleneck_path):
-        image_path = get_image_path(images_lists, INPUT_DATA, label_name, index, category)
+        image_path = get_image_path(image_lists, INPUT_DATA, label_name, index, category)
         image_data = gfile.FastGFile(name=image_path, mode='rb').read()
-        bottleneck_values = run_bottleneck_on_iomage(sess, image_data, jpeg_data_tensor, bottleneck_tensor)
+        bottleneck_values = run_bottleneck_on_image(sess, image_data, jpeg_data_tensor, bottleneck_tensor)
         bottleneck_string = ','.join(str(x) for x in bottleneck_values)
         with open(bottleneck_path, 'w') as bottleneck_file:
             bottleneck_file.write(bottleneck_string)
@@ -110,6 +110,15 @@ def get_or_create_bottleneck(sess, images_lists, label_name, index, category, jp
 
 
 def get_random_cached_bottlenecks(sess, n_classes, image_lists, how_many, category, jpeg_data_tensor, bottleneck_tensor):
+    '''
+    :param sess: tensorflow session
+    :param n_classes:  number of classes
+    :param image_lists:  images
+    :param how_many:  batch size
+    :param category:  training, validation or testing
+    :param jpeg_data_tensor:  input image name in model
+    :param bottleneck_tensor:  bottleneck image in model
+    '''
     bottlenecks = []
     ground_truths = []
     for _ in range(how_many):
