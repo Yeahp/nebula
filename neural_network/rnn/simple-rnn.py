@@ -93,7 +93,6 @@ K = keras.backend
 def mae_last_step(Y_true, Y_pred):
     return K.mean(K.abs(Y_pred[:, -1] - Y_true[:, -1]))
 
-'''
 from sklearn.metrics import mean_absolute_error
 
 
@@ -137,7 +136,6 @@ model1.compile(loss="mse", optimizer=keras.optimizers.SGD(lr=0.005), metrics=["m
 history1 = model1.fit(X_train_3D, y_train, epochs=200, batch_size=200, validation_data=(X_valid_3D, y_valid))
 plot_history(history1)
 print('loss-4: ', model1.evaluate(X_valid_3D, y_valid)[1])
-
 y_pred_rnn1 = model1.predict(X_valid_3D)
 
 input_shape = X_train_3D.shape[1:]
@@ -209,7 +207,6 @@ history4 = model4.fit(X_train_3D, Y_train_3D, epochs=200, batch_size=100,
 plot_history(history4)
 y_pred_rnn4 = model4.predict(X_valid_3D)[:, -1]
 print('loss-4: ', model4.evaluate(X_valid_3D, Y_valid_3D)[1])
-'''
 
 Y = add_lags(temps, times=range(-24, 5+1)).iloc[30:-5]
 Y_train = Y.loc[train_slice]
